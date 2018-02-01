@@ -211,7 +211,7 @@ export class QueryFilterPanel extends React.Component<IQueryFilterPanelProps, IQ
                 }
 
                 { !this.state.loading && 
-                    <Button buttonType={ButtonType.primary} onClick={this.onAddFilterClick.bind(this)} disabled={this.props.disabled} icon='Add'>{this.props.strings.addFilterLabel}</Button> 
+                    <Button buttonType={ButtonType.primary} onClick={this.onAddFilterClick.bind(this)} disabled={this.props.disabled} iconProps={ { iconName:'Add' } }>{this.props.strings.addFilterLabel}</Button> 
                 }
 
                 {error}

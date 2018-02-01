@@ -1,8 +1,7 @@
 import * as strings                                             from 'contentQueryStrings';
 import { IDropdownOption, IPersonaProps, ITag }                 from 'office-ui-fabric-react';
-import { SPHttpClient, SPHttpClientResponse }                   from '@microsoft/sp-http';
 import { isEmpty }                                              from '@microsoft/sp-lodash-subset';
-import { IWebPartContext }                                      from '@microsoft/sp-webpart-base';
+import { WebPartContext }                                       from '@microsoft/sp-webpart-base';
 import { Text, Log }                                            from '@microsoft/sp-core-library';
 import { IContentQueryService }                                 from './IContentQueryService';
 import { IQueryFilterField }                                    from '../../controls/PropertyPaneQueryFilterPanel/components/QueryFilter/IQueryFilterField';
@@ -15,6 +14,7 @@ import { ListService }                                          from './ListServ
 import { SearchService }                                        from './SearchService';
 import { PeoplePickerService }                                  from './PeoplePickerService';
 import { TaxonomyService }                                      from './TaxonomyService';
+import { SPHttpClient, SPHttpClientResponse }                   from '@microsoft/sp-http';
 
 
 export class ContentQueryService implements IContentQueryService {
@@ -24,7 +24,7 @@ export class ContentQueryService implements IContentQueryService {
     /***************************************************************************
      * The page context and http clients used for performing REST calls
      ***************************************************************************/
-    private context: IWebPartContext;
+    private context: WebPartContext;
     private spHttpClient: SPHttpClient;
 
 
@@ -50,10 +50,10 @@ export class ContentQueryService implements IContentQueryService {
 
     /***************************************************************************
      * Constructor
-     * @param context : A IWebPartContext for logging and page context
+     * @param context : A WebPartContext for logging and page context
      * @param spHttpClient : A SPHttpClient for performing SharePoint specific requests
      ***************************************************************************/
-    constructor(context: IWebPartContext, spHttpClient: SPHttpClient) {
+    constructor(context: WebPartContext, spHttpClient: SPHttpClient) {
         Log.verbose(this.logSource, "Initializing a new IContentQueryService instance...", context.serviceScope);
 
         this.context = context;
@@ -79,8 +79,8 @@ export class ContentQueryService implements IContentQueryService {
                 items: [],
                 accessDenied: false,
                 webNotFound: false,
-                callTimeStamp: callTimeStamp
-            };
+                callTimeStamp: callTimeStamp,
+            } as IContentQueryTemplateContext;
 
             // Builds the CAML query based on the webpart settings
             let query = CamlQueryHelper.generateCamlQuery(querySettings);
