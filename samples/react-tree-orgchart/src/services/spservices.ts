@@ -1,13 +1,7 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { graph } from "@pnp/graph";
 import { sp } from '@pnp/sp';
-import { ITreeChildren } from "../webparts/treeOrgChart/components/ITreeChildren";
-
-
 
 export default class spservices {
-
-
 
   constructor(private context:WebPartContext) {
 
@@ -25,15 +19,10 @@ export default class spservices {
     return currentUserProperties;
   }
 
-  /**
-   * async GetUserProfileProperty
-user:string   */
   public async getUserProfileProperty(user:string,property:string) {
     let UserProperty:any = await sp.profiles.getUserProfilePropertyFor(user, property);
     console.log(UserProperty);
 
     return UserProperty;
-  }
-
-   
+  }   
 }
