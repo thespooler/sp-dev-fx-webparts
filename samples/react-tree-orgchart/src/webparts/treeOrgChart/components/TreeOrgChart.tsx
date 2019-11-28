@@ -103,7 +103,7 @@ export default class TreeOrgChart extends React.Component<ITreeOrgChartProps, IT
     person = <Persona {...spUser} hidePersonaDetails={false} size={PersonaSize.size40} />;
     // Has DirectReports
     if (managerProperties.DirectReports && managerProperties.DirectReports.length > 0) {
-      const usersDirectReports: any[] = await this.getChildren(managerProperties.DirectReports);
+      const usersDirectReports = await this.getChildren(managerProperties.DirectReports, []);
       // return treeData
       return { title: (person), expanded: true, children: usersDirectReports };
       // Don't have DirectReports
@@ -112,14 +112,18 @@ export default class TreeOrgChart extends React.Component<ITreeOrgChartProps, IT
       return { title: (person) };
     }
   }
+
   // Get Children (user DirectReports)
-  private async getChildren(userDirectReports: any[]) {
+  private async getChildren(userDirectReports, fetchedChildrens: any[]) {
 
     let treeChildren: ITreeChildren[] = [];
     let spUser: IPersonaSharedProps = {};
 
-    for (const user of userDirectReports) {
+    for (const user of userDirectReports.filter(u => fetchedChildrens.indexOf(u) == -1)) {
+      fetchedChildrens.push(user);
+
       const managerProperties = await this.SPService.getUserProperties(user);
+
       const imageInitials: string[] = managerProperties.DisplayName.split(' ');
 
       spUser.imageUrl = `/_layouts/15/userphoto.aspx?size=L&username=${managerProperties.Email}`;
@@ -128,7 +132,8 @@ export default class TreeOrgChart extends React.Component<ITreeOrgChartProps, IT
       spUser.tertiaryText = managerProperties.Email;
       spUser.secondaryText = managerProperties.Title;
       const person = <Persona {...spUser} hidePersonaDetails={false} size={PersonaSize.size40} />;
-      const usersDirectReports = await this.getChildren(managerProperties.DirectReports);
+
+      const usersDirectReports = await this.getChildren(managerProperties.DirectReports, fetchedChildrens);
 
       usersDirectReports ? treeChildren.push({ title: (person), children: usersDirectReports }) :
         treeChildren.push({ title: (person) });
@@ -174,7 +179,7 @@ export default class TreeOrgChart extends React.Component<ITreeOrgChartProps, IT
     me.tertiaryText = currentUserProperties.Email;
     me.secondaryText = currentUserProperties.Title;
     const meCard = <Persona {...me} hidePersonaDetails={false} size={PersonaSize.size40} />;
-    const usersDirectReports: any[] = await this.getChildren(currentUserProperties.DirectReports);
+    const usersDirectReports: any[] = await this.getChildren(currentUserProperties.DirectReports, [currentUserProperties.AccountName]);
     // Current USer Has Manager
     if (hasManager) {
       treeChildren.push({ title: (meCard), expanded: true, children: usersDirectReports });

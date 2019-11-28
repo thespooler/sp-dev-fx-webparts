@@ -11,6 +11,9 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "outDir": "lib",
+    "inlineSources": false,
+    "strictNullChecks": false,
+    "noUnusedLocals": false,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@microsoft"
@@ -22,8 +25,7 @@
     "lib": [
       "es5",
       "dom",
-      "es2015.collection",
-      "es2015.promise"
+      "es2015.collection"
     ]
   },
   "include": [
