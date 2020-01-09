@@ -1,0 +1,105 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+.calendarEvent {
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  .documentCard {
+    -webkit-font-smoothing: antialiased;
+    background-color: $ms-color-white;
+    border-width: 2px;
+    border-style: solid;
+    border-color: $ms-color-neutralQuaternaryAlt;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    max-width: 320px;
+    min-width: 200px;
+    min-height: 190px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    padding-top: 9px;
+    position: relative;
+
+    &.today {
+      background-color: $ms-color-themeLight;
+    }
+  }
+
+  .documentCard:hover {
+    border-color: $ms-color-neutralTertiaryAlt;
+  }
+
+  .personaTertiary {
+    @include ms-fontWeight-semibold;
+    color: $ms-color-themeTertiary;
+  }
+
+  .centered {
+    @include ms-font-l;
+    @include ms-fontWeight-semibold;
+    position: absolute;
+    top: 78px;
+    width: 100%;
+    font-style: italic;
+    text-align: center;
+    color: $ms-color-neutralPrimary;
+  }
+
+  .personaContainer {
+    margin-Top: 40px;
+    margin-Left: 10px;
+    margin-Right: 10px;
+  }
+
+  .persona {
+    position: absolute;
+    top: 137px;
+    max-width: 200px;
+  }
+
+  .actions {
+    position: absolute;
+    top: 190px;
+    width: 100%;
+    border-top-style: solid;
+    border-top-color: $ms-color-neutralTertiaryAlt;
+    border-top-width: 1.1px;
+  }
+
+  .eventcake {
+    font-Size: 20px;
+    width: 31px;
+    height: 29px;
+    color: $ms-color-orangeLight;
+    bottom: 1px;
+    right: 5px;
+    position: absolute;
+    border-radius: 50%;
+    background-color: $ms-color-neutralLighterAlt;
+    text-align: center;
+    @include ms-fontWeight-semibold;
+
+    padding-top: 5px;
+    padding-left: 2px;
+  }
+
+  .eventDateToday {
+    color: $ms-color-orangeLight;
+  }
+
+  .eventDate {
+    @include ms-fontWeight-semibold;
+    width: 100%;
+    //color: $ms-color-themeTertiary;
+    top: 107px;
+    position: absolute;
+    font-size: $ms-font-size-s;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "Group events",
+    "id": "a5ff9b8f-8b19-44fa-bc5a-b0340222be3a",
+    "version": "1.1.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Group.Read.All"
+      }]
+  },
+  "paths": {
+    "zippedPackage": "solution/calendar-events.sppkg"
+  }
+}
