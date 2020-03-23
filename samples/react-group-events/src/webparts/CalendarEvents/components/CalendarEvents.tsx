@@ -9,7 +9,7 @@ import * as strings from 'ControlStrings';
 
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { useState, useEffect } from 'react';
-import { CalendarEventCard, IUser } from '../../..';
+import { CalendarEventCard, IUserEvent } from '../../..';
 
 import styles from './../../../controls/calendareventcard/CalendarEventCard.module.scss';
 
@@ -33,7 +33,7 @@ interface ICalendarEvent {
   }[];
 }
 
-const getCalendarEvents: (context: WebPartContext, calendarGroupId: string, numberUpcomingDays: number, eventCategory: string) => Promise<IUser[]> = (context: WebPartContext, calendarGroupId: string, numberUpcomingDays: number, eventCategory: string) => {
+const getCalendarEvents: (context: WebPartContext, calendarGroupId: string, numberUpcomingDays: number, eventCategory: string) => Promise<IUserEvent[]> = (context: WebPartContext, calendarGroupId: string, numberUpcomingDays: number, eventCategory: string) => {
   const today = new Date();
   const nextYear = new Date();
   nextYear.setFullYear(today.getFullYear() + 1);
@@ -46,22 +46,23 @@ const getCalendarEvents: (context: WebPartContext, calendarGroupId: string, numb
       userEmail: e.attendees[0].emailAddress.address,
       userName: e.attendees[0].emailAddress.name,
       key: e.attendees[0].emailAddress.address
-    } as IUser))));
+    } as IUserEvent))));
 };
 
 export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (props: ICalendarEventsProps) => {
-  const [users, setUsers] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
   useEffect(() => {
-    getCalendarEvents(props.context, props.calendarGroupId, props.numberUpcomingDays, props.calendarEventCategory).then(u => setUsers(u));
+    getCalendarEvents(props.context, props.calendarGroupId, props.numberUpcomingDays, props.calendarEventCategory).then(u => setUserEvents(u));
   }, [props.calendarGroupId, props.numberUpcomingDays, props.calendarEventCategory]);
+
   return <>
         <WebPartTitle displayMode={props.displayMode}
           title={props.title}
           updateProperty={props.updateProperty}
-          moreLink={ <Link href={ `https://outlook.office.com/calendar/group/${new URL(props.context.pageContext.site.absoluteUrl).host.replace('.sharepoint.', '.onmicrosoft.')}/${props.calendarGroupMailNickname}/view/month` }>{strings.ShowCalendar}</Link> }
+          moreLink={ <Link target="_blank" href={ `https://outlook.office.com/calendar/group/${new URL(props.context.pageContext.site.absoluteUrl).host.replace('.sharepoint.', '.onmicrosoft.')}/${props.calendarGroupMailNickname}/view/month` }>{strings.ShowCalendar}</Link> }
         />
         {
-          users.length === 0 ?
+          userEvents.length === 0 ?
             <Placeholder iconName="Calendar"
               iconText={strings.MessageNoEvent}
               description={strings.MessageNoEvent}
@@ -69,7 +70,7 @@ export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (pr
           :
             <div className={styles.calendarEvent}>
             {
-              users.map((user: IUser) => <CalendarEventCard {...user} imageUrl={props.imageUrl} />)
+              userEvents.map((userEvent: IUserEvent) => <CalendarEventCard {...userEvent} imageUrl={props.imageUrl} />)
             }
             </div>
         }

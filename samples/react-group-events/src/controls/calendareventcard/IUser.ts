@@ -1,4 +1,4 @@
-export interface IUser {
+export interface IUserEvent {
   key: string;
   userName:string;
   jobDescription?: string;
