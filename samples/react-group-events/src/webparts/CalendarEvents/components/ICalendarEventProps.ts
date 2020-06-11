@@ -1,5 +1,8 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { DisplayMode } from '@microsoft/sp-core-library';
+import { IPropertyFieldSite } from "@pnp/spfx-property-controls";
+
+export type EventSourceType = "SPList" | "GroupCalendar";
 
 export interface ICalendarEventsProps {
   title: string;
@@ -11,4 +14,7 @@ export interface ICalendarEventsProps {
   calendarGroupMailNickname: string;
   calendarEventCategory: string;
   imageUrl:string;
+  eventSourceType: EventSourceType;
+  siteEventSource: IPropertyFieldSite[];
+  listEventSource: string;
 }

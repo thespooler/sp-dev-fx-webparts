@@ -1,7 +1,7 @@
 declare interface IControlStrings {
   Today: string,
   MessageNoEvent: string,
-  ShowCalendar: string
+  ShowEvents: string
 }
 
 declare module 'ControlStrings' {
