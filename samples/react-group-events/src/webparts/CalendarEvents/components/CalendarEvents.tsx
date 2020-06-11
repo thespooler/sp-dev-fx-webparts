@@ -75,11 +75,11 @@ const getCalendarEvents: (props: ICalendarEventsProps) => Promise<IUserEvent[]> 
           date.setDate(value.day);
           return ({
             eventDate: moment(date).format("YYYY-MM-DD"),
-            eventTitle: value.Title || value.person.Title,
+            eventTitle: value.Title || (value.person ? value.person.Title : ""),
             key: value.id,
-            userEmail: value.email || value.person.EMail,
-            userName: value.person.UserName,
-            jobDescription: value.person.JobTitle,
+            userEmail: value.email || (value.person ? value.person.EMail : ""),
+            userName: (value.person ? value.person.UserName : ""),
+            jobDescription: (value.person ? value.person.JobTitle : ""),
           } as IUserEvent);
         });
       });
