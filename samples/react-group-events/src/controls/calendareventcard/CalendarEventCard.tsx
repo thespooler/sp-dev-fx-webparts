@@ -9,9 +9,10 @@ import {  DocumentCardActions } from 'office-ui-fabric-react/lib/DocumentCard';
 import { FunctionComponent } from 'react';
 
 import styles from './CalendarEventCard.module.scss';
+import { Position } from 'office-ui-fabric-react/lib/utilities/positioning';
 
 const IMG_WIDTH: number = 200;
-const IMG_HEIGTH: number = 190;
+const IMG_HEIGTH: number = 200;
 
 export const CalendarEventCard: FunctionComponent<ICalendarEventCardProps> = (props: ICalendarEventCardProps) => {
   const isEventToday = moment().isSame(props.eventDate, 'day');
@@ -28,41 +29,36 @@ export const CalendarEventCard: FunctionComponent<ICalendarEventCardProps> = (pr
   console.info(props.imageUrl);
 
   return <div className={[styles.documentCard, isEventToday ? styles.today : ''].join(' ')}>
-          <Image
-            imageFit={ImageFit.cover}
-            src={props.imageUrl}
-            width={IMG_WIDTH}
-            height={IMG_HEIGTH}
-          />
-          <Label className={styles.centered}>{props.eventTitle}</Label>
-          <Label className={[ styles.centered, styles.eventDate, isEventToday ? styles.eventDateToday : '' ].join(' ')}>{formattedDate}</Label>
-          <div className={styles.personaContainer}>
-            <Persona
-              {...persona}
-              size={PersonaSize.regular}
-              className={styles.persona}
-              onRenderTertiaryText={ personaProps => <div>
-                <span className='personaTertiary'>{personaProps.tertiaryText}</span>
-              </div> }
+          <div style={{ position: 'absolute', top: 0 }}>
+            <Image
+              imageFit={ImageFit.cover}
+              src={props.imageUrl}
+              width={IMG_WIDTH}
+              height={IMG_HEIGTH}
             />
           </div>
-          <div className={styles.actions}>
-            <DocumentCardActions
-              actions={[
-                {
-                  iconProps: { iconName: 'Mail' },
-                  onClick: (ev: any) => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                  window.location.href = `mailto:${props.userEmail}?subject=${props.eventTitle}!`;
-                  },
-                  ariaLabel: 'email'
-                }
-              ]}
-            />
-            {
-            isEventToday && <div className={styles.eventcake}><Icon iconName="GotoToday" /></div>
-            }
+          <div className={styles.cardBody}>
+            <Label className={styles.centered}>{props.eventTitle}</Label>
+            <Label className={[ styles.centered, styles.eventDate, isEventToday ? styles.eventDateToday : '' ].join(' ')}>{formattedDate}</Label>
+            <div className={styles.actions}>
+              { props.userEmail &&
+              <DocumentCardActions
+                actions={[
+                  {
+                    iconProps: { iconName: 'Mail' },
+                    onClick: (ev: any) => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                    window.location.href = `mailto:${props.userEmail}?subject=${props.eventTitle}!`;
+                    },
+                    ariaLabel: 'email'
+                  }
+                ]}
+              />}
+              {
+              isEventToday && <div className={styles.eventcake}><Icon iconName="GotoToday" /></div>
+              }
+            </div>
           </div>
         </div>;
 };

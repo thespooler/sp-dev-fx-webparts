@@ -18,7 +18,6 @@ import { ICalendarEventsProps, EventSourceType } from './components/ICalendarEve
 
 import { graph } from "@pnp/graph/presets/all";
 import { sp } from '@pnp/pnpjs';
-import { personaPresenceSize } from 'office-ui-fabric-react/lib/Persona';
 
 export interface ICalendarEventWebPartProps {
   title: string;
@@ -27,8 +26,8 @@ export interface ICalendarEventWebPartProps {
   eventSourceType: EventSourceType;
   calendarGroup: string;
   calendarEventCategory: string;
-  siteEventSource: IPropertyFieldSite[];
-  listEventSource: string;
+  eventSourceSite: IPropertyFieldSite[];
+  eventSourceList: string;
 }
 
 interface IMSGraphGroup {
@@ -38,7 +37,7 @@ interface IMSGraphGroup {
   visibility: "Public" | "Private" | "Hiddenmembership" | null | undefined;
 }
 
-export const ProvidedImages: string[] = [ require('../../../assets/award.svg'), require('../../../assets/cake.svg') ];
+export const ProvidedImages: string[] = [ require('../../../assets/award.svg'), require('../../../assets/cake.svg'), require('../../../assets/icn_anniversaire_20200622_v02_mt-02.svg') ];
 
 function extractTitleFromPath(path: string): string {
   const fileonly = path.substring(path.lastIndexOf('/') + 1);
@@ -77,8 +76,8 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
           this.properties.title = value;
         },
         eventSourceType: this.properties.eventSourceType,
-        siteEventSource: this.properties.siteEventSource,
-        listEventSource: this.properties.listEventSource,
+        siteEventSource: this.properties.eventSourceSite,
+        listEventSource: this.properties.eventSourceList,
       }
     );
 
@@ -127,20 +126,20 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
     else if (this.properties.eventSourceType == "SPList")
     {
       dataGroup = [
-        PropertyFieldSitePicker("siteEventSource", {
+        PropertyFieldSitePicker("eventSourceSite", {
           label: strings.DataSourceTypeSelectSite,
           context: this.context,
           multiSelect: false,
-          initialSites: this.properties.siteEventSource,
+          initialSites: this.properties.eventSourceSite,
           onPropertyChange: this.onPropertyPaneFieldChanged,
           properties: this.properties,
           key: "siteFieldId"
         })
       ];
 
-      if (this.properties.siteEventSource) {
+      if (this.properties.eventSourceSite) {
         dataGroup.push(
-          PropertyFieldListPicker("listEventSource", {
+          PropertyFieldListPicker("eventSourceList", {
             label: strings.DataSourceTypeSelectList,
             context: this.context,
             onPropertyChange: this.onPropertyPaneFieldChanged,
@@ -148,8 +147,8 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
             properties: this.properties,
             key: "listFieldId",
             includeHidden: false,
-            selectedList: this.properties.listEventSource,
-            webAbsoluteUrl: this.properties.siteEventSource[0].url
+            selectedList: this.properties.eventSourceList,
+            webAbsoluteUrl: this.properties.eventSourceSite[0].url
         }));
       }
     }

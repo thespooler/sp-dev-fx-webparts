@@ -17,6 +17,7 @@ import { sp } from '@pnp/pnpjs';
 import * as moment from 'moment';
 
 import { groupBy, sortBy } from '@microsoft/sp-lodash-subset';
+import { Promise } from 'es6-promise';
 
 interface ICalendarEvent {
   id: string;
@@ -39,12 +40,12 @@ interface ICalendarEvent {
 }
 
 const getCalendarEvents: (props: ICalendarEventsProps) => Promise<IUserEvent[]> = (props) => {
-  let { context, calendarGroupId, numberUpcomingDays, calendarEventCategory } = props;
+  let { context, eventSourceType, calendarGroupId, numberUpcomingDays, calendarEventCategory } = props;
   const today = new Date();
   const nextYear = new Date();
   nextYear.setFullYear(today.getFullYear() + 1);
 
-  if (props.eventSourceType == "SPList" && props.siteEventSource) {
+  if (eventSourceType == "SPList" && props.siteEventSource) {
     const untilDay = new Date();
     untilDay.setDate(untilDay.getDate() + props.numberUpcomingDays);
     untilDay.setFullYear(today.getFullYear());
@@ -82,19 +83,21 @@ const getCalendarEvents: (props: ICalendarEventsProps) => Promise<IUserEvent[]> 
             jobDescription: (value.person ? value.person.JobTitle : ""),
           } as IUserEvent);
         });
-      });
+      }) as Promise<IUserEvent[]>;
+  } else if (eventSourceType == "GroupCalendar" && calendarGroupId) {
+    let filter = !!calendarEventCategory ? `&$filter=categories/any(c:c+eq+'${calendarEventCategory}')` : "";
+    const url = `https://graph.microsoft.com/v1.0/groups/${calendarGroupId}/calendarView?startdatetime=${today.toLocaleDateString("en-CA")}T00:00:00.0000Z&enddatetime=${nextYear.toLocaleDateString("en-CA")}T00:00:00.000Z&$top=${numberUpcomingDays}&$orderby=start/datetime&$select=attendees,start,subject${filter}`;
+
+    return context.msGraphClientFactory.getClient().then(graph => graph.api(url).get().then((events: { value: ICalendarEvent[] }) => events.value.map(e => ({
+        eventDate: e.start.dateTime,
+        eventTitle: e.subject,
+        userEmail: e.attendees[0].emailAddress.address,
+        userName: e.attendees[0].emailAddress.name,
+        key: e.attendees[0].emailAddress.address
+      } as IUserEvent)))) as Promise<IUserEvent[]>;
+  } else {
+    return Promise.resolve([] as IUserEvent[]);
   }
-
-  let filter = !!calendarEventCategory ? `&$filter=categories/any(c:c+eq+'${calendarEventCategory}')` : "";
-  const url = `https://graph.microsoft.com/v1.0/groups/${calendarGroupId}/calendarView?startdatetime=${today.toLocaleDateString("en-CA")}T00:00:00.0000Z&enddatetime=${nextYear.toLocaleDateString("en-CA")}T00:00:00.000Z&$top=${numberUpcomingDays}&$orderby=start/datetime&$select=attendees,start,subject${filter}`;
-
-  return context.msGraphClientFactory.getClient().then(graph => graph.api(url).get().then((events: { value: ICalendarEvent[] }) => events.value.map(e => ({
-      eventDate: e.start.dateTime,
-      eventTitle: e.subject,
-      userEmail: e.attendees[0].emailAddress.address,
-      userName: e.attendees[0].emailAddress.name,
-      key: e.attendees[0].emailAddress.address
-    } as IUserEvent))));
 };
 
 export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (props: ICalendarEventsProps) => {
