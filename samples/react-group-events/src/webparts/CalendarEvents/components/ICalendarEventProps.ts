@@ -1,6 +1,7 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { DisplayMode } from '@microsoft/sp-core-library';
 import { IPropertyFieldSite } from "@pnp/spfx-property-controls";
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export type EventSourceType = "SPList" | "GroupCalendar";
 
@@ -18,4 +19,5 @@ export interface ICalendarEventsProps {
   siteEventSource: IPropertyFieldSite[];
   listEventSource: string;
   showEventsTargetUrl: string;
+  themeVariant: IReadonlyTheme | undefined;
 }

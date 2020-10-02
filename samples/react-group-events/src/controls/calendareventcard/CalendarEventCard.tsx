@@ -9,7 +9,7 @@ import {  DocumentCardActions } from 'office-ui-fabric-react/lib/DocumentCard';
 import { FunctionComponent } from 'react';
 
 import styles from './CalendarEventCard.module.scss';
-import { Position } from 'office-ui-fabric-react/lib/utilities/positioning';
+
 
 const IMG_WIDTH: number = 200;
 const IMG_HEIGTH: number = 200;

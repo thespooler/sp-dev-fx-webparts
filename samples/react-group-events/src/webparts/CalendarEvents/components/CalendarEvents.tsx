@@ -18,6 +18,7 @@ import * as moment from 'moment';
 
 import { groupBy, sortBy } from '@microsoft/sp-lodash-subset';
 import { Promise } from 'es6-promise';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 interface ICalendarEvent {
   id: string;
@@ -45,7 +46,7 @@ const getCalendarEvents: (props: ICalendarEventsProps) => Promise<IUserEvent[]> 
   const nextYear = new Date();
   nextYear.setFullYear(today.getFullYear() + 1);
 
-  if (eventSourceType == "SPList" && props.siteEventSource) {
+  if (eventSourceType == "SPList" && props.siteEventSource && props.siteEventSource.length > 0) {
     const untilDay = new Date();
     untilDay.setDate(untilDay.getDate() + props.numberUpcomingDays);
     untilDay.setFullYear(today.getFullYear());
@@ -100,12 +101,19 @@ const getCalendarEvents: (props: ICalendarEventsProps) => Promise<IUserEvent[]> 
   }
 };
 
+interface IError {
+  error: boolean;
+  message: string;
+}
+
 export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (props: ICalendarEventsProps) => {
   const [userEvents, setUserEvents] = useState<IUserEvent[]>([]);
   const [eventsUrl, setEventsUrl] = useState('');
+  const [loadError, setLoadError] = useState<IError>({error: false, message: ''});
+
   useEffect(() => {
-    getCalendarEvents(props).then(u => setUserEvents(u));
-  }, [props.calendarGroupId, props.numberUpcomingDays, props.calendarEventCategory]);
+    getCalendarEvents(props).then(u => setUserEvents(u)).catch(e => { setLoadError({error:true, message: e}); setUserEvents([]); } );
+  }, [props.eventSourceType, props.context, props.siteEventSource, props.listEventSource, props.calendarGroupId, props.numberUpcomingDays, props.calendarEventCategory]);
 
   useEffect(() => {
     if (!!props.showEventsTargetUrl) {
@@ -115,15 +123,17 @@ export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (pr
     {
       setEventsUrl(`https://outlook.office.com/calendar/group/${new URL(props.context.pageContext.site.absoluteUrl).host.replace('.sharepoint.', '.onmicrosoft.')}/${props.calendarGroupMailNickname}/view/month`);
     }
-    else if (props.eventSourceType == "SPList" && props.siteEventSource) {
+    else if (props.eventSourceType == "SPList" && props.siteEventSource && props.siteEventSource.length > 0) {
       new Web(props.siteEventSource[0].url)
         .lists.getById(props.listEventSource)
         .defaultView.get()
         .then(value => setEventsUrl(value.ServerRelativeUrl));
     }
   }, [props.eventSourceType, props.context, props.siteEventSource, props.listEventSource, props.showEventsTargetUrl]);
+  
+  const { semanticColors }: IReadonlyTheme = props.themeVariant;
 
-  return <>
+  return <div style={ { backgroundColor: semanticColors.bodyBackground } }>
         <WebPartTitle displayMode={props.displayMode}
           title={props.title}
           updateProperty={props.updateProperty}
@@ -142,7 +152,7 @@ export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (pr
             }
             </div>
         }
-      </>;
+      </div>;
 };
 
 export default CalendarEvents;

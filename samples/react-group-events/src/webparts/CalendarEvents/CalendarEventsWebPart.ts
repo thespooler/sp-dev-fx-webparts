@@ -20,6 +20,12 @@ import { ICalendarEventsProps, EventSourceType } from './components/ICalendarEve
 import { graph } from "@pnp/graph/presets/all";
 import { sp } from '@pnp/pnpjs';
 
+import {
+  ThemeProvider,
+  ThemeChangedEventArgs,
+  IReadonlyTheme
+} from '@microsoft/sp-component-base';
+
 export interface ICalendarEventWebPartProps {
   title: string;
   numberUpcomingEvents: number;
@@ -50,8 +56,19 @@ function extractTitleFromPath(path: string): string {
 export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalendarEventWebPartProps> {
 
   private availableCalendarGroups: IPropertyPaneDropdownOption[] = undefined;
+  private _themeProvider: ThemeProvider;
+  private _themeVariant: IReadonlyTheme | undefined;
 
   public onInit(): Promise<void> {
+
+    // Consume the new ThemeProvider service
+    this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
+
+    // If it exists, get the theme variant
+    this._themeVariant = this._themeProvider.tryGetTheme();
+
+    // Register a handler to be notified if the theme variant changes
+    this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent);
 
     return super.onInit().then(_ => {
       sp.setup(this.context);
@@ -60,9 +77,20 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
       });
     });
   }
+ 
+  /**
+   * Update the current theme variant reference and re-render.
+   *
+   * @param args The new theme
+   */
+  private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
+    this._themeVariant = args.theme;
+    this.render();
+  }
 
   public render(): void {
     const [calendarGroupId, calendarGroupMailNickname] = (this.properties.calendarGroup || '/').split('/');
+
     const element: React.ReactElement<ICalendarEventsProps> = React.createElement(
       CalendarEvents,
       {
@@ -81,6 +109,7 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
         siteEventSource: this.properties.eventSourceSite,
         listEventSource: this.properties.eventSourceList,
         showEventsTargetUrl: this.properties.showEventsTargetUrl,
+        themeVariant: this._themeVariant
       }
     );
 
@@ -140,7 +169,7 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
         })
       ];
 
-      if (this.properties.eventSourceSite) {
+      if (this.properties.eventSourceSite && this.properties.eventSourceSite.length > 0) {
         dataGroup.push(
           PropertyFieldListPicker("eventSourceList", {
             label: strings.DataSourceTypeSelectList,
