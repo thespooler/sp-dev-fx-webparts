@@ -11,6 +11,7 @@ declare interface ICalendarEventsWebPartStrings {
   DataSourceTypeGroup: string;
   DataSourceTypeSelectSite: string;
   DataSourceTypeSelectList: string;
+  ShowEventsTargetUrl: string;
 }
 
 declare module 'CalendarEventsWebPartStrings' {

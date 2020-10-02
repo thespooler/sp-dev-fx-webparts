@@ -12,5 +12,6 @@ define([], function() {
     "DataSourceTypeGroup": "Office365 group calendar",
     "DataSourceTypeSelectSite": "Source site",
     "DataSourceTypeSelectList": "Event list",
+    "ShowEventsTargetUrl":"Show all events link URL",
   }
 });

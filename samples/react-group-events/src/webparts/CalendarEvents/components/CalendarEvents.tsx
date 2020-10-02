@@ -108,7 +108,10 @@ export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (pr
   }, [props.calendarGroupId, props.numberUpcomingDays, props.calendarEventCategory]);
 
   useEffect(() => {
-    if (props.eventSourceType == "GroupCalendar")
+    if (!!props.showEventsTargetUrl) {
+      setEventsUrl(props.showEventsTargetUrl);
+    }
+    else if (props.eventSourceType == "GroupCalendar")
     {
       setEventsUrl(`https://outlook.office.com/calendar/group/${new URL(props.context.pageContext.site.absoluteUrl).host.replace('.sharepoint.', '.onmicrosoft.')}/${props.calendarGroupMailNickname}/view/month`);
     }
@@ -118,7 +121,7 @@ export const CalendarEvents: React.FunctionComponent<ICalendarEventsProps> = (pr
         .defaultView.get()
         .then(value => setEventsUrl(value.ServerRelativeUrl));
     }
-  }, [props.eventSourceType, props.context, props.siteEventSource, props.listEventSource]);
+  }, [props.eventSourceType, props.context, props.siteEventSource, props.listEventSource, props.showEventsTargetUrl]);
 
   return <>
         <WebPartTitle displayMode={props.displayMode}

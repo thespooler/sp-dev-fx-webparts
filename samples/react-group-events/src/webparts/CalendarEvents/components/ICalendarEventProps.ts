@@ -17,4 +17,5 @@ export interface ICalendarEventsProps {
   eventSourceType: EventSourceType;
   siteEventSource: IPropertyFieldSite[];
   listEventSource: string;
+  showEventsTargetUrl: string;
 }

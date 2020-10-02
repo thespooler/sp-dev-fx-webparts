@@ -12,5 +12,6 @@ define([], function() {
     "DataSourceTypeGroup": "Calendrier de groupe Office365",
     "DataSourceTypeSelectSite": "Site source",
     "DataSourceTypeSelectList": "Liste d'événements",
+    "ShowEventsTargetUrl":"Lien URL vers la liste des événements",
   }
 });

@@ -7,7 +7,8 @@ import {
   IPropertyPaneConfiguration,
   IPropertyPaneDropdownOption,
   PropertyPaneChoiceGroup,
-  PropertyPaneDropdown
+  PropertyPaneDropdown,
+  PropertyPaneTextField
 } from "@microsoft/sp-property-pane";
 import { PropertyFieldSitePicker, PropertyFieldListPicker, IPropertyFieldSite } from '@pnp/spfx-property-controls';
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
@@ -28,6 +29,7 @@ export interface ICalendarEventWebPartProps {
   calendarEventCategory: string;
   eventSourceSite: IPropertyFieldSite[];
   eventSourceList: string;
+  showEventsTargetUrl: string;
 }
 
 interface IMSGraphGroup {
@@ -78,6 +80,7 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
         eventSourceType: this.properties.eventSourceType,
         siteEventSource: this.properties.eventSourceSite,
         listEventSource: this.properties.eventSourceList,
+        showEventsTargetUrl: this.properties.showEventsTargetUrl,
       }
     );
 
@@ -197,6 +200,10 @@ export default class CalendarEventsWebPart extends BaseClientSideWebPart<ICalend
                       selectedImageSrc: imageUrl
                     } as IPropertyPaneChoiceGroupOption)
                   )
+                }),
+                PropertyPaneTextField('showEventsTargetUrl', { 
+                  label:strings.ShowEventsTargetUrl, 
+                  value: this.properties.showEventsTargetUrl,
                 })
               ]
             }
